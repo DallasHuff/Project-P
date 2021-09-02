@@ -1,5 +1,7 @@
 from Tiles import *
+from Mobs import *
 from csv import reader
+import numpy as np
 import pygame
 import random
 import math
@@ -33,9 +35,7 @@ def draw_text(text, font, color, surface, x, y):
 
 
 def game_menu():
-
-    for event in pygame.event.get():
-        pass
+    pass
 
 
 def main_menu():
@@ -45,7 +45,7 @@ def main_menu():
 
     while True:
 
-        big_screen.fill((0, 0, 0))
+        big_screen.fill((30, 0, 0))
         draw_text('PROJECT:', title_font, (209, 67, 27), big_screen, s_width * 0.5, s_height / 10)
         draw_text('PHOENIX', title_font, (209, 67, 27), big_screen, s_width * 0.5, s_height / 5)
 
@@ -56,12 +56,8 @@ def main_menu():
         pygame.draw.rect(big_screen, (230, 138, 0), button_2)
         pygame.draw.rect(big_screen, (230, 138, 0), button_3)
 
-        # ------------ testing
-        screen.blit(Tileset.get_tile(1, 1), (100, 100))
-        # ----------------
-
         draw_text('Play Game', menu_font, (255, 255, 255), big_screen, s_width * 0.5, s_height * 0.5 + s_height / 30)
-        draw_text('Options (NYI)', menu_font, (255, 255, 255), big_screen, s_width * 0.5, s_height * 0.65 + s_height / 30)
+        draw_text('Options', menu_font, (255, 255, 255), big_screen, s_width * 0.5, s_height * 0.65 + s_height / 30)
         draw_text('Exit Game', menu_font, (255, 255, 255), big_screen, s_width * 0.5, s_height * 0.8 + s_height / 30)
 
         mx, my = pygame.mouse.get_pos()
@@ -112,7 +108,9 @@ def main_game():
                 quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    main_menu()
+                    pass
+                if event.key == pygame.K_RIGHT:
+                    game_menu()
                 if event.key == pygame.K_ESCAPE:
                     main_menu()
             if event.type == pygame.MOUSEBUTTONUP:
@@ -132,6 +130,8 @@ def main_game():
                 x += 1
             y += 1
 
+        player.update()
+        player_sprite.draw(screen)
         # dec_scroll[0] += (player_rect.x - dec_scroll[0] - (s_width / 2))/20
         # dec_scroll[1] += (player_rect.y - dec_scroll[1] - (s_height / 2)) / 20
         pygame.display.update()
@@ -144,7 +144,13 @@ if __name__ == '__main__':
     # General init ----------------------------------------------- #
     pygame.init()
     clock = pygame.time.Clock()
-    frame_rate = 60
+    frame_rate = 120
+    clock.tick(frame_rate)
+
+    # sprite groups -------------------------------------------- #
+    player_sprite = pygame.sprite.GroupSingle()
+    player = Player(10, 10)
+    player_sprite.add(player)
 
     # Font init -------------------------------------------------- #
     default_font = pygame.font.SysFont('Times New Roman', 20)

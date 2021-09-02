@@ -17,10 +17,9 @@ class Tilesheet:
     def create_tile_map(width, height):
         tile_map = {}
         num = 0
-        for c in range (0, width):
+        for c in range(0, width):
             for r in range(0, height):
                 tile_map[num] = (r, c)
-                print(num, tile_map[num])
                 num += 1
         return tile_map
 
