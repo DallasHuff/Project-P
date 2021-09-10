@@ -3,7 +3,7 @@ from Support import load_folder
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, unit):
         super().__init__()
         # ---- movement -----
         self.x = x
@@ -13,6 +13,7 @@ class Player(pygame.sprite.Sprite):
         self.facing_right = True
 
         # ------- animation ------
+        self.unit = unit
         self.frame_index = 0
         self.animation_speed = 0.15
         self.animations = {}
@@ -24,7 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.curr_spell = 0
 
     def load_character_assets(self):
-        character_path = 'art/mobs/lizard_m/'
+        character_path = 'art/mobs/' + self.unit + '/'
         self.animations = {'idle': [], 'run': [], 'hit': []}
 
         for animation in self.animations.keys():
@@ -71,6 +72,7 @@ class Player(pygame.sprite.Sprite):
         if k[pygame.K_s]:
             self.y += self.speed
             self.status = 'run'
+
         # TODO spells
 
 

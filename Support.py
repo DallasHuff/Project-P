@@ -11,6 +11,4 @@ def load_folder(path):
             full_path = path + '/' + img
             img_surface = pygame.image.load(full_path)
             surface_list.append(img_surface)
-            print(full_path)
-    print(surface_list)
     return surface_list

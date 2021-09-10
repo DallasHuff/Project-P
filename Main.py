@@ -18,6 +18,10 @@ import os
 # blue = (0, 0, 255)
 
 
+class Game:
+    pass
+
+
 def load_map(path):
     game_map = []
     with open(path + '.csv', 'r') as read_obj:
@@ -140,7 +144,6 @@ def main_game():
 
 
 if __name__ == '__main__':
-
     # General init ----------------------------------------------- #
     pygame.init()
     clock = pygame.time.Clock()
@@ -149,9 +152,8 @@ if __name__ == '__main__':
 
     # sprite groups -------------------------------------------- #
     player_sprite = pygame.sprite.GroupSingle()
-    player = Player(10, 10)
+    player = Player(50, 50, 'lizard_m')
     player_sprite.add(player)
-
     # Font init -------------------------------------------------- #
     default_font = pygame.font.SysFont('Times New Roman', 20)
     title_font = pygame.font.SysFont('couriernew', 100)
