@@ -1,9 +1,10 @@
 import pygame
 from Support import load_folder
+from SpriteGroups import *
 
 
-class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, unit):
+class Mob(pygame.sprite.Sprite):
+    def __init__(self, x, y, unit='lizard_m', hp=100):
         super().__init__()
         # ---- movement -----
         self.x = x
@@ -13,15 +14,17 @@ class Player(pygame.sprite.Sprite):
         self.facing_right = True
 
         # ------- animation ------
-        self.unit = unit
+        self.unit = unit    # lizard_m as default unit
         self.frame_index = 0
         self.animation_speed = 0.15
         self.animations = {}
+        self.spell_animations = {}
         self.load_character_assets()
         self.image = self.animations['idle'][self.frame_index]
         self.rect = self.image.get_rect(topleft=(x, y))
 
-        # ----- spells -------
+        # ----- combat -------
+        self.hp = hp
         self.curr_spell = 0
 
     def load_character_assets(self):
@@ -49,11 +52,32 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.rect = self.image.get_rect(topleft=(self.x, self.y))
         self.animate()
-        self.move()
+        self.actions()
 
-    def move(self):
+    def actions(self):
 
         k = pygame.key.get_pressed()
+
+        # ------- controls
+        self.status = 'idle'
+        # movement
+
+
+class Player(Mob):
+    def __init__(self, x, y):
+        super().__init__(x, y, unit='knight_m')
+        self.hp = 100
+        self.spell_CD = 10
+        self.spell_index = 0
+        self.spell_ready = True
+
+    def actions(self):
+        k = pygame.key.get_pressed()
+
+        self.spell_index += 0.1
+        if self.spell_index >= self.spell_CD:
+            self.spell_index = 0
+            self.spell_ready = True
 
         # ------- controls
         self.status = 'idle'
@@ -72,15 +96,68 @@ class Player(pygame.sprite.Sprite):
         if k[pygame.K_s]:
             self.y += self.speed
             self.status = 'run'
+        if k[pygame.K_1]:
+            # if self.spell_ready:
+            #     self.spell_ready = False
+            spell = Spell(1, self.x, self.y)
+            spell_sprites.add(spell)
 
-        # TODO spells
+    def load_character_assets(self):
+        character_path = 'art/mobs/' + self.unit + '/'
+        self.animations = {'idle': [], 'run': [], 'hit': []}
+
+        for animation in self.animations.keys():
+            full_path = character_path + animation
+            self.animations[animation] = load_folder(full_path)
 
 
-class Minion(pygame.sprite.Sprite):
-    def __init__(self, x, y, rect_size):
+class Spell(pygame.sprite.Sprite):
+    def __init__(self, spell_id, x, y):
         super().__init__()
-        self.rect.topleft = [x, y]
-        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.animations = {}
+        self.load_spell_assets()
+        # self.load_character_assets()
+        self.frame_index = 0
+        self.animation_speed = 0.15
+        self.id = spell_id
+        self.image = self.animations['fireball'][self.frame_index]
+        self.rect = self.image.get_rect(topleft=(x, y))
 
-    def draw(self, screen):
-        pass
+    def load_character_assets(self):
+        character_path = 'art/mobs/lizard_m/'
+        self.animations = {'idle': [], 'run': [], 'hit': []}
+
+        for animation in self.animations.keys():
+            full_path = character_path + animation
+            self.animations[animation] = load_folder(full_path)
+
+    def load_spell_assets(self):
+        spell_path = 'art/spells/'
+        self.animations = {'fireball': [], 'ice_shard': []}
+
+        for spell in self.animations.keys():
+            full_path = spell_path + spell
+            self.animations[spell] = load_folder(full_path)
+
+    def animate(self):
+        animation = self.animations['fireball']   # Fireball
+
+        self.frame_index += self.animation_speed
+        if self.frame_index >= len(animation):
+            self.frame_index = 0
+            self.kill()
+
+        self.image = animation[int(self.frame_index)]
+        self.image = pygame.transform.rotozoom(self.image, 0, 0.5)
+
+    def update(self):
+        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+        self.animate()
+
+
+class BigZombie(Mob):
+    def __init__(self, x, y):
+        super().__init__(x, y, unit='big_zombie', hp=500)
+

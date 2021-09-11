@@ -1,6 +1,7 @@
 from Tiles import *
 from Mobs import *
 from csv import reader
+from SpriteGroups import *
 import numpy as np
 import pygame
 import random
@@ -71,7 +72,8 @@ def main_menu():
                 main_game()
         if button_2.collidepoint((mx, my)):
             if click:
-                print('button 2')
+                for mob in mob_sprites:
+                    mob.kill()
         if button_3.collidepoint((mx, my)):
             if click:
                 sys.exit('exit button')
@@ -134,8 +136,12 @@ def main_game():
                 x += 1
             y += 1
 
+        mob_sprites.update()
         player.update()
+        spell_sprites.update()
+        mob_sprites.draw(screen)
         player_sprite.draw(screen)
+        spell_sprites.draw(screen)
         # dec_scroll[0] += (player_rect.x - dec_scroll[0] - (s_width / 2))/20
         # dec_scroll[1] += (player_rect.y - dec_scroll[1] - (s_height / 2)) / 20
         pygame.display.update()
@@ -151,9 +157,11 @@ if __name__ == '__main__':
     clock.tick(frame_rate)
 
     # sprite groups -------------------------------------------- #
-    player_sprite = pygame.sprite.GroupSingle()
-    player = Player(50, 50, 'lizard_m')
+    enemy = BigZombie(100, 100)
+    mob_sprites.add(enemy)
+    player = Player(50, 50)
     player_sprite.add(player)
+
     # Font init -------------------------------------------------- #
     default_font = pygame.font.SysFont('Times New Roman', 20)
     title_font = pygame.font.SysFont('couriernew', 100)
