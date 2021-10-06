@@ -1,14 +1,10 @@
 from Tiles import *
 from Mobs import *
-from csv import reader
 from SpriteGroups import *
-import numpy as np
+from csv import reader
 import pygame
-import random
-import math
 import sys
 import time
-import os
 
 
 # Colors  --------------------------------------- #
@@ -156,12 +152,6 @@ if __name__ == '__main__':
     frame_rate = 120
     clock.tick(frame_rate)
 
-    # sprite groups -------------------------------------------- #
-    enemy = BigZombie(100, 100)
-    mob_sprites.add(enemy)
-    player = Player(50, 50)
-    player_sprite.add(player)
-
     # Font init -------------------------------------------------- #
     default_font = pygame.font.SysFont('Times New Roman', 20)
     title_font = pygame.font.SysFont('couriernew', 100)
@@ -172,6 +162,10 @@ if __name__ == '__main__':
     s_info = pygame.display.Info()
     s_width, s_height = s_info.current_w, s_info.current_h
     screen = pygame.Surface((s_width / 3, s_height / 3))
+
+    # sprite groups -------------------------------------------- #
+    player = Player(50, 50, screen)
+    player_sprite.add(player)
 
     Tileset = Tilesheet('art/environment/spritesheet.png', 16, 16, 16, 16)
 

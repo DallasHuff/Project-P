@@ -1,6 +1,6 @@
-import pygame
 from Support import load_folder
 from SpriteGroups import *
+from Spells import Spell
 
 
 class Mob(pygame.sprite.Sprite):
@@ -50,7 +50,7 @@ class Mob(pygame.sprite.Sprite):
             self.image = flipped_image
 
     def update(self):
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
+        self.rect = self.image.get_rect(center=(self.x, self.y))
         self.animate()
         self.actions()
 
@@ -64,12 +64,13 @@ class Mob(pygame.sprite.Sprite):
 
 
 class Player(Mob):
-    def __init__(self, x, y):
+    def __init__(self, x, y, display):
         super().__init__(x, y, unit='knight_m')
         self.hp = 100
         self.spell_CD = 10
         self.spell_index = 0
         self.spell_ready = True
+        self.display = display
 
     def actions(self):
         k = pygame.key.get_pressed()
@@ -99,7 +100,9 @@ class Player(Mob):
         if k[pygame.K_1]:
             # if self.spell_ready:
             #     self.spell_ready = False
-            spell = Spell(1, self.x, self.y)
+            mx, my = pygame.mouse.get_pos()
+            pygame.draw.line(self.display, (255, 255, 0), (self.x, self.y), (mx / 3, my / 3), 3)
+            spell = Spell(1, self.x, self.y, mx / 3, my / 3)
             spell_sprites.add(spell)
 
     def load_character_assets(self):
@@ -111,53 +114,6 @@ class Player(Mob):
             self.animations[animation] = load_folder(full_path)
 
 
-class Spell(pygame.sprite.Sprite):
-    def __init__(self, spell_id, x, y):
-        super().__init__()
-        self.x = x
-        self.y = y
-        self.animations = {}
-        self.load_spell_assets()
-        # self.load_character_assets()
-        self.frame_index = 0
-        self.animation_speed = 0.15
-        self.id = spell_id
-        self.image = self.animations['fireball'][self.frame_index]
-        self.rect = self.image.get_rect(topleft=(x, y))
-
-    def load_character_assets(self):
-        character_path = 'art/mobs/lizard_m/'
-        self.animations = {'idle': [], 'run': [], 'hit': []}
-
-        for animation in self.animations.keys():
-            full_path = character_path + animation
-            self.animations[animation] = load_folder(full_path)
-
-    def load_spell_assets(self):
-        spell_path = 'art/spells/'
-        self.animations = {'fireball': [], 'ice_shard': []}
-
-        for spell in self.animations.keys():
-            full_path = spell_path + spell
-            self.animations[spell] = load_folder(full_path)
-
-    def animate(self):
-        animation = self.animations['fireball']   # Fireball
-
-        self.frame_index += self.animation_speed
-        if self.frame_index >= len(animation):
-            self.frame_index = 0
-            self.kill()
-
-        self.image = animation[int(self.frame_index)]
-        self.image = pygame.transform.rotozoom(self.image, 0, 0.5)
-
-    def update(self):
-        self.rect = self.image.get_rect(topleft=(self.x, self.y))
-        self.animate()
-
-
 class BigZombie(Mob):
     def __init__(self, x, y):
         super().__init__(x, y, unit='big_zombie', hp=500)
-
