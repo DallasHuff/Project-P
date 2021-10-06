@@ -1,6 +1,7 @@
 from Tiles import *
 from Mobs import *
 from SpriteGroups import *
+from Debugger import debug
 from csv import reader
 import pygame
 import sys
@@ -127,21 +128,26 @@ def main_game():
             for item in row:
                 item = int(item)
                 if item != -1:
-                    r, c = Tileset.tile_map[item]
-                    screen.blit(Tileset.get_tile(r, c), (x * 16, y * 16))
+                    r, c = Tileset_1.tile_map[item]
+                    screen.blit(Tileset_1.get_tile(r, c), (x * 16 - int(scroll[0]), y * 16 - int(scroll[1])))
                 x += 1
             y += 1
 
-        mob_sprites.update()
-        player.update()
-        spell_sprites.update()
+        # update and draw sprites
+        mob_sprites.update(scroll)
+        player.update(scroll)
+        spell_sprites.update(scroll)
         mob_sprites.draw(screen)
         player_sprite.draw(screen)
         spell_sprites.draw(screen)
-        # dec_scroll[0] += (player_rect.x - dec_scroll[0] - (s_width / 2))/20
-        # dec_scroll[1] += (player_rect.y - dec_scroll[1] - (s_height / 2)) / 20
+
+        # camera position
+        scroll[0] += (player.rtn_pos()[0] - scroll[0] - (s_width / 6) + 8) / 20
+        scroll[1] += (player.rtn_pos()[1] - scroll[1] - (s_height / 6) + 8) / 20
+
         pygame.display.update()
-        big_screen.blit(pygame.transform.scale(screen, (s_width, s_height)), (0,0))
+
+        big_screen.blit(pygame.transform.scale(screen, (s_width, s_height)), (0, 0))
         dt = clock.tick(60)
 
 
@@ -162,11 +168,13 @@ if __name__ == '__main__':
     s_info = pygame.display.Info()
     s_width, s_height = s_info.current_w, s_info.current_h
     screen = pygame.Surface((s_width / 3, s_height / 3))
+    scroll = [0, 0]
 
     # sprite groups -------------------------------------------- #
-    player = Player(50, 50, screen)
+    player = Player(s_width / 8, s_height / 8, screen)
     player_sprite.add(player)
 
-    Tileset = Tilesheet('art/environment/spritesheet.png', 16, 16, 16, 16)
-
+    Tileset_1 = Tilesheet('art/environment/spritesheet.png', 16, 16, 16, 16)
+    Tileset_1.collision_blocks = [0, 1, 2, 3, 4, 7, 16, 17, 18, 19, 20, 21, 22, 36, 17, 38, 48, 51, 52, 53, 54, 64, 65,
+                                  66, 67, 68, 69, 70, 74, 75, 76, 77, 78, 79, 90, 91, 92, 93, 94, 95, 189, 205]
     main_menu()

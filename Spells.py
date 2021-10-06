@@ -77,7 +77,7 @@ class Spell(pygame.sprite.Sprite):
             self.x += self.x_move
             self.y += self.y_move
 
-    def update(self):
+    def update(self, scroll):
         self.move()
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.rect = self.image.get_rect(center=(self.x - scroll[0], self.y - scroll[1]))
         self.animate()

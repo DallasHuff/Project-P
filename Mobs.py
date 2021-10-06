@@ -27,6 +27,12 @@ class Mob(pygame.sprite.Sprite):
         self.hp = hp
         self.curr_spell = 0
 
+    def rtn_rect(self):
+        return self.rect.centerx, self.rect.centery
+
+    def rtn_pos(self):
+        return self.x, self.y
+
     def load_character_assets(self):
         character_path = 'art/mobs/' + self.unit + '/'
         self.animations = {'idle': [], 'run': [], 'hit': []}
@@ -49,18 +55,15 @@ class Mob(pygame.sprite.Sprite):
             flipped_image = pygame.transform.flip(image, True, False)
             self.image = flipped_image
 
-    def update(self):
-        self.rect = self.image.get_rect(center=(self.x, self.y))
-        self.animate()
-        self.actions()
-
     def actions(self):
-
-        k = pygame.key.get_pressed()
-
         # ------- controls
         self.status = 'idle'
         # movement
+
+    def update(self, scroll):
+        self.rect = self.image.get_rect(center=(self.x - scroll[0], self.y - scroll[1]))
+        self.animate()
+        self.actions()
 
 
 class Player(Mob):
@@ -101,7 +104,7 @@ class Player(Mob):
             # if self.spell_ready:
             #     self.spell_ready = False
             mx, my = pygame.mouse.get_pos()
-            pygame.draw.line(self.display, (255, 255, 0), (self.x, self.y), (mx / 3, my / 3), 3)
+            pygame.draw.line(self.display, (255, 255, 0), (self.rect.centerx, self.rect.centery), (mx / 3, my / 3), 3)
             spell = Spell(1, self.x, self.y, mx / 3, my / 3)
             spell_sprites.add(spell)
 
