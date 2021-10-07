@@ -12,6 +12,10 @@ class Mob(pygame.sprite.Sprite):
         self.speed = 1.5
         self.status = 'idle'
         self.facing_right = True
+        self.running_left = False
+        self.running_right = False
+        self.running_up = False
+        self.running_down = False
 
         # ------- animation ------
         self.unit = unit    # lizard_m as default unit
@@ -26,6 +30,9 @@ class Mob(pygame.sprite.Sprite):
         # ----- combat -------
         self.hp = hp
         self.curr_spell = 0
+
+    def rtn_direction(self):
+        return self.running_up, self.running_down, self.running_left, self.running_right
 
     def rtn_rect(self):
         return self.rect.centerx, self.rect.centery
@@ -83,23 +90,36 @@ class Player(Mob):
             self.spell_index = 0
             self.spell_ready = True
 
+        self.running_left = False
+        self.running_right = False
+        self.running_up = False
+        self.running_down = False
+
         # ------- controls
         self.status = 'idle'
+        
         # movement
         if k[pygame.K_a]:
             self.x -= self.speed
             self.status = 'run'
             self.facing_right = False
-        if k[pygame.K_d]:
+            self.running_left = True
+        elif k[pygame.K_d]:
             self.x += self.speed
             self.status = 'run'
             self.facing_right = True
+            self.running_right = True
+
         if k[pygame.K_w]:
             self.y -= self.speed
             self.status = 'run'
-        if k[pygame.K_s]:
+            self.running_up = True
+        elif k[pygame.K_s]:
             self.y += self.speed
             self.status = 'run'
+            self.running_down = True
+
+        # spells
         if k[pygame.K_1]:
             # if self.spell_ready:
             #     self.spell_ready = False
