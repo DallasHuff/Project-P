@@ -29,7 +29,3 @@ class Tilesheet:
 
     def draw(self, screen, tile, x, y):
         pass
-
-
-# tile_set = makeSprite('art/environment/dungeon_tileset.png')
-

@@ -121,29 +121,49 @@ def main_game():
 
         # -------------- draw screen
         screen.fill((0, 0, 0))
-        # -------- draw tiles
-        y = 0
+        # -------- draw tiles AND COLLISION
+        player_dir = player.rtn_direction()
+        y_t = 0
         for row in curr_map:
-            x = 0
+            x_t = 0
             for item in row:
                 item = int(item)
                 if item != -1:
                     r, c = Tileset_1.tile_map[item]
-                    screen.blit(Tileset_1.get_tile(r, c), (x * 16 - int(scroll[0]), y * 16 - int(scroll[1])))
-                x += 1
-            y += 1
+                    tile = screen.blit(Tileset_1.get_tile(r, c), (x_t * 16 - int(scroll[0]), y_t * 16 - int(scroll[1])))
+                    # collision part
+                    if item in Tileset_1.collision_blocks:
+                        if player.rect.colliderect(tile):
+                            if player_dir[0]:   # up
+                                player.rect.top = tile.bottom
+                            elif player_dir[1]:   # down
+                                player.y = int(y_t * 16 - 16)
+                            if player_dir[2]:   # left
+                                player.x = int(x_t * 16 + 8)
+                            elif player_dir[3]:   # right
+                                player.x = int(x_t * 16 - 8)
+                x_t += 1
+            y_t += 1
 
-        # update and draw sprites
+        debug(player.rect.top)
+        debug(player.rect.bottom, 10, 50)
+        # for row in curr_map:
+        #     for item in row:
+        #         if player.rect.colliderect(item):
+        #             if player_dir[0]:
+        #                 player.rect.top = item.bottom
+
+        # ------------ camera position
+        scroll[0] += (player.rtn_pos()[0] - scroll[0] - (s_width / 6) + 8) / 20
+        scroll[1] += (player.rtn_pos()[1] - scroll[1] - (s_height / 6) + 8) / 20
+
+        # --------------- update and draw sprites
         mob_sprites.update(scroll)
         player.update(scroll)
         spell_sprites.update(scroll)
         mob_sprites.draw(screen)
         player_sprite.draw(screen)
         spell_sprites.draw(screen)
-
-        # camera position
-        scroll[0] += (player.rtn_pos()[0] - scroll[0] - (s_width / 6) + 8) / 20
-        scroll[1] += (player.rtn_pos()[1] - scroll[1] - (s_height / 6) + 8) / 20
 
         pygame.display.update()
 
@@ -155,7 +175,7 @@ if __name__ == '__main__':
     # General init ----------------------------------------------- #
     pygame.init()
     clock = pygame.time.Clock()
-    frame_rate = 120
+    frame_rate = 60
     clock.tick(frame_rate)
 
     # Font init -------------------------------------------------- #

@@ -31,6 +31,13 @@ class Mob(pygame.sprite.Sprite):
         self.hp = hp
         self.curr_spell = 0
 
+    def rect_move(self, direction, tile):
+        direction = 0
+        self.rect.top = tile.bottom
+
+    def rtn_status(self):
+        return self.status
+
     def rtn_direction(self):
         return self.running_up, self.running_down, self.running_left, self.running_right
 
@@ -97,7 +104,7 @@ class Player(Mob):
 
         # ------- controls
         self.status = 'idle'
-        
+
         # movement
         if k[pygame.K_a]:
             self.x -= self.speed

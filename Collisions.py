@@ -7,26 +7,26 @@ def collision_test(rect, tiles):
 
 
 def collision(rect, movement, tiles):
-    collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
+    # collision_types = {'top': False, 'bottom': False, 'right': False, 'left': False}
     rect.x += movement[0]
     hit_list = collision_test(rect, tiles)
     for tile in hit_list:
-        if movement[0] > 0:
+        if movement[4]:   # running right
             rect.right = tile.left
-            collision_types['right'] = True
-        elif movement[0] < 0:
+            # collision_types['right'] = True
+        elif movement[3]:   # running left
             rect.left = tile.right
-            collision_types['left'] = True
+            # collision_types['left'] = True
 
     rect.y += movement[1]
     hit_list = collision_test(rect, tiles)
     for tile in hit_list:
-        if movement[1] > 0:
+        if movement[0]:   # running up
             rect.bottom = tile.top
-            collision_types['bottom'] = True
-        elif movement[1] < 0:
+            # collision_types['bottom'] = True
+        elif movement[1]:   # running down
             rect.top = tile.bottom
-            collision_types['top'] = True
+            # collision_types['top'] = True
 
-    return rect, collision_types
+    return rect
 
